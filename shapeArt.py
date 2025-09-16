@@ -6,17 +6,21 @@ import matplotlib.image as mpimg
 
 class Artist:
     def __init__ (self, transition_matrix):
+        # store the transition matrix as well as the list of all possible sunset pictures 
         self.transition_matrix = transition_matrix
         self.pics = list(transition_matrix.keys())
         
 
     def get_next_pic(self, current_pic):
+        """ 
+        Given the current picture, randomly selects the next picture based on the transition matrix probabilities."""
         return np.random.choice( 
             self.pics, p=[self.transition_matrix[current_pic][next_pic] 
             for next_pic in self.pics]
         )
 
     def compose_sequence(self, current_pic = "CollegeStreet.png", length = 6):
+        """ Generates a sequence of sunset pics based on the transition matrix """
         sequence = []
         current_pic = current_pic
         while len(sequence) < length:
@@ -26,17 +30,19 @@ class Artist:
         return sequence
     
     def make_sunset_grid(self, sequence, grid_size=(5, 4)):
-        """ Draws the grid of ranomized sunset pics """
-        fig, ax = plt.subplots(figsize = (8,6))
+        """ Draws the grid of randomized sunset pics in a grid layout using matplotlib """
+        fig, ax = plt.subplots(figsize = (12,9)) # set size of figure 
         ax.set_aspect('equal')
         ax.axis('off')
 
         rows, cols = grid_size 
         for idx, photo in enumerate(sequence):
+            # compute row and col positions for each pic 
             row = idx // cols
             col = idx % cols
             x, y = col, -row
             img = mpimg.imread(f"assets/{photo}")
+            # place the image in the grid
             ax.imshow(img, extent=[x, x+1, y-1, y])
 
         plt.xlim(0, cols)
@@ -57,14 +63,15 @@ def main():
         "NY.png": {"BrooklynBridge.png": 0.1, "CollegeStreet.png": 0.1, "Brunswick.png": 0.1, "Hinsdale.png": 0.2, "Ocean.png": 0.2, "NY.png": 0.3},
     }   
 
+
+    # create an Artist instance with the transition matrix
     artist = Artist(transition_matrix)
-    seq = artist.compose_sequence(current_pic="CollegeStreet.png", length=6)
+    # generate a random sequence of pics starting from "Brunswick.png"
+    seq = artist.compose_sequence(current_pic="Brunswick.png", length=6)
 
     print("Generated sequence:", seq)
-
+    # displays the sequence in a grid layout
     artist.make_sunset_grid(seq, grid_size=(3, 2))
-
-
 
 if __name__ == "__main__":
     main()
