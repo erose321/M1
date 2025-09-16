@@ -36,7 +36,7 @@ class Artist:
             row = idx // cols
             col = idx % cols
             x, y = col, -row
-            img = mpimg.imread(photo)
+            img = mpimg.imread(f"assets/{photo}")
             ax.imshow(img, extent=[x, x+1, y-1, y])
 
         plt.xlim(0, cols)
